@@ -1,0 +1,97 @@
+{% load staticfiles %}
+
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Sign Up</title>
+  <link rel="stylesheet" href="{% static 'assets/css/style1.css' %}" />
+
+</head>
+
+<body>
+  
+  <form action="" method="post">
+    <h2>
+      <!-- <span class="entypo-login"></span> -->
+       Register</h2>
+  
+    <button id="submit" type="button" name="submit" class="button" value="signup">
+      <span class="entypo-plus"></span>
+    </button>
+    <span class="entypo-user inputUserIcon"></span>
+    <input id="email" name="email" type="text" class="user col" placeholder="email" />
+    <span class="entypo-key inputPassIcon"></span>
+    <input id="password" name="password" type="password" class="pass" placeholder="password" />
+    <span class="entypo-key outPassIcon" style="position: absolute;top: 204px;right: 120px;color: white;"></span>
+    <input id="repeat_password" name="repeat_password" type="password" class="pass_confirm" placeholder="repeat password" />
+  </form>
+
+
+  <script src="{% static 'assets/js/jquery.min.js' %}"></script>
+  
+  <script type="text/javascript">
+    $(document).ready(function(){
+     
+      $(".user").focusin(function () {
+        $(".inputUserIcon").css("color", "#e74c3c");
+      }).focusout(function () {
+        $(".inputUserIcon").css("color", "white");
+      });
+
+      $(".pass").focusin(function () {
+        $(".inputPassIcon").css("color", "#e74c3c");
+      }).focusout(function () {
+        $(".inputPassIcon").css("color", "white");
+      });
+
+
+      $(".pass_confirm").focusin(function () {
+        $(".outPassIcon").css("color", "#e74c3c");
+      }).focusout(function () {
+        $(".outPassIcon").css("color", "white");
+      });
+
+      $("#submit").click(function(){
+        var useremail = $("#email").val();
+        var password = $("#password").val();
+        var repeat_password = $("#repeat_password").val();
+
+        $.post("{% url 'sign_up' %}",
+          {
+            email: useremail,
+            password: password,
+            repeat_password: repeat_password
+          },
+          function(data){
+            alert(data);
+            if(data.toString() == "Username already exists. But you can now login using the new password")
+            {
+              window.location.href = "{% url 'login' %}";
+            }
+            if(data.toString() == "Sucessfully added user.")
+            {
+              window.location.href = "{% url 'login' %}";
+            }
+          }
+        );
+
+      });
+
+
+    });
+  </script>
+
+  {% if error_message %}
+  <script type="text/javascript">
+
+      var err = "{{ error_message }}";
+      alert(err);
+
+  </script>
+  {% endif %}
+</body>
+
+</html>

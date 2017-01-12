@@ -1,0 +1,49 @@
+{% load staticfiles %}
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Login</title>
+  <link rel="stylesheet" href="{% static 'assets/css/style.css' %}" />
+
+  <style>
+    
+  </style>
+
+</head>
+
+<body>
+  <form action="" method="post">{% csrf_token %}
+    
+    <h2>
+      <!-- <span class="entypo-login"></span> -->
+      Login</h2>
+    <a href="{% url 'register' %}">
+    <button type="button" class="button1" style="position: absolute; left: 0px;"><span class="entypo-plus"></span></button>
+    </a>
+    <button type="submit" name="submit" class="submit" value="login" style="left: 5px;"><span class="entypo-lock"></span></button>
+    <span class="entypo-user inputUserIcon"></span>
+    <input name="email" type="text" class="user col" placeholder="email" />
+    <span class="entypo-key inputPassIcon"></span>
+    <input name="password" type="password" class="pass" placeholder="password" />
+  </form>
+  <script src="{% static 'assets/js/jquery.min.js' %}"></script>
+  <script src="{% static 'assets/js/index.js' %}"></script>
+  {% if error_message %}
+  <script type="text/javascript">
+      var err = "{{ error_message }}";
+      alert(err);
+  </script>
+  {% endif %}
+  {% if message_signup %}
+  <script type="text/javascript">
+      var err = "{{ message_signup }}";
+      alert(err);
+  </script>
+  {% endif %}
+
+</body>
+
+</html>

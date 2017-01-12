@@ -1,0 +1,346 @@
+{% load staticfiles %}
+<!DOCTYPE HTML>
+<!--
+	Tactile by Pixelarity
+	pixelarity.com | hello@pixelarity.com
+	License: pixelarity.com/license
+-->
+<html>
+
+<head>
+	<title>Router</title>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+	<!--[if lte IE 8]><script src="assets/js/ie/html5shiv.js"></script><![endif]-->
+	<link rel="stylesheet" href="{% static 'assets/css/main.css' %}" />
+	<link rel="stylesheet" href="{% static 'assets/css/tree.css' %}" />
+	<!--[if lte IE 9]><link rel="stylesheet" href="assets/css/ie9.css" /><![endif]-->
+	<!--[if lte IE 8]><link rel="stylesheet" href="assets/css/ie8.css" /><![endif]-->
+
+</head>
+
+<body>
+
+	<!-- Header -->
+	<header id="header">
+		<h1>
+			<a href="{% url 'home' %}">Cod3fi</a>
+		</h1>
+		<a href="{% url 'logout' %}">Log Out</a>
+		<a href="#menu">Menu</a>
+	</header>
+
+
+	<!-- Menu -->
+	<nav id="menu">
+		<ul class="links">
+			<li><a href="{% url 'user' %}">Users</a></li>
+			<li><a href="{% url 'ssid' %}">SSID</a></li>
+			<li><a href="history.html">History</a></li>
+			<li><a href="networkana.html">Network Analyis</a></li>
+			<li><a href="triggers.html">Triggers</a></li>
+			<li><a href="notifications.html">Notifications</a></li>
+			<li><a href="controliot.html">Control IoT Devices</a></li>
+			<li><a href="settings.html">Settings</a></li>
+			<li><a href="https://www.cod3fi.com">Documentation</a></li>
+		</ul>
+	</nav>
+
+	<form method="post" action="#">
+		<div class="row uniform">
+			<div class="9u 12u$(small)">
+				<input type="text" name="query" id="query" value="" placeholder="Query" />
+			</div>
+			<div class="3u$ 12u$(small)">
+				<input type="submit" value="Search" class="fit" />
+			</div>
+		</div>
+	</form>
+
+	<!-- One -->
+	<section id="one" class="wrapper alt style2">
+		<ul class="features">
+			<li>
+				<div class="content">
+					<span class="icon major fa-diamond"></span>
+					<h3 align="left" class="major">Favorites</h3>
+					<div class="table-wrapper">
+						<table>
+							<thead>
+								<tr>
+									<th>Name</th>
+									<th>IP address</th>
+									<th>Current Status</th>
+								</tr>
+							</thead>
+							<tbody>
+								{% for device in devices_favo %}
+									<tr>
+										{% if device.visited %}
+											<td><a href="{% url 'device' device.username %}">{{ device.username }}</a></td>
+											<td>{{ device.domain }}</td>
+											<td style="color:#33FF3C";>Active</td>
+										{% else %}
+											<td>{{ device.username }}</td>
+											<td>-</td>
+											<td style="color:#FF3F33";>Active</td>
+										{% endif %}
+									</tr>
+								{% endfor %}
+							<tbody>
+						</table>
+					</div>
+				<ul class="actions">
+					<li><a href="{% url 'user' %}" class="button">Details</a></li>
+				</ul>
+			</div>
+		</li>
+		<li>
+			<span class="image fit">
+				<div class="content">
+					<span class="icon major fa-diamond"></span>
+					<h3 class="major">Network traffic</h3>
+					<h6 class="major">Showing last 7 days activity</h6>
+
+					<div class="image fit" style="background-image: url('images/bubble.png'); width: 512px;height: 240px; min-width: 40px;">
+						<div style="background-color: #f4f5f9; width: 508px;height: 236px; margin: 2px;">
+							<canvas id="chartcontainer" width="508px" height="236px"></canvas>
+						</div>
+					</div>
+				</div>
+			</span>
+		</li>
+		<li>
+			<div class="content">
+				<span class="icon major fa-paper-plane-o"></span>
+				<h3 class="major">Diagnostic Mode</h3>
+				<p>Run automatic diagnostic test select from the following active devices</p>
+				<div class="12u$">
+					<div class="select-wrapper">
+						<select name="category" id="category">
+									<option value="">- Category -</option>
+									{% for device in devices %}
+										{% if device.visited %}
+											<option value="">{{ device.domain }}</option>
+										{% endif %}
+									{% endfor %}
+						</select>
+					</div>
+				</div>
+				<br/>
+				<ul class="actions">
+					<li><a href="#" class="button">Test</a></li>
+				</ul>
+			</div>
+		</li>
+		<li>
+			<div class="content">
+				<span class="icon major fa-files-o"></span>
+				<h3 class="major">Network Stats</h3>
+				<div class="table-wrapper">
+				<table>
+					<thead>
+						<tr>
+							<th>Number of active devices</th>
+							<th>IP address</th>
+							<th>Bandwidth Usage</th>
+							<th>Compliance</th>
+						</tr>
+					</thead>
+					<tbody>
+						
+						{% for device in devices_favo %}
+							{% if device.visited %}
+								<tr>
+									<td><a href="{% url 'device' device.username %}">{{ device.username }}</a></td>
+									<td>{{ device.domain }}</td>
+									<td>{{ device.bandwidth_usage }}%</td>
+									{% if device.compliance %}
+										<td style="color:#33FF3C";>Complaint</td>
+									{% endif %}
+									{% if not device.compliance %}
+										<td style="color:#FF3F33";>Not Complaint</td>
+									{% endif %}
+								</tr>
+							{% endif %}
+						{% endfor %}
+					</tbody>
+				</table>
+			</div>
+			<ul class="actions">
+				<li><a href="#" class="button">Details</a></li>
+			</ul>
+			</div>
+		</li>
+		<li>
+			<div class="content">
+				<span class="icon major fa-paper-plane-o"></span>
+				<h3 class="major">Warning</h3>
+				<table>
+					<thead>
+						<tr>
+							<th>User name</th>
+							<th>IP address</th>
+							<th>Notifications</th>
+						</tr>
+					</thead>
+					<tbody class="css-treeview">
+						<ul>
+						{% for device in devices %}
+								{% for key2, value2 in flag_notify.items %}
+									{% if device.domain == value2 %}
+										<tr>
+											<td><a href="{% url 'device' device.username %}">{{ device.username }}</a></td>
+											<td>{{ device.domain }}</td>
+											<td>
+												<li><input type="checkbox" id="item-{{ key2 }}" /><label for="item-{{ key2 }}">Notifications for {{ device.username }}</label>
+        										<ul>
+													{% for key, value in key_no.items %}
+														{% if device.domain == value %}
+															{% for key1, value1 in notify.items %}
+																{% if key == key1 %}
+																	<li><p style="color: #FF3F33;">-</p>{{ value1 }}</li>
+																{% endif %}
+															{% endfor %}
+														{% endif %}
+													{% endfor %}
+        										</ul>
+												</li>
+											</td>
+										</tr>
+									{% endif %}
+								{% endfor %}
+						{% endfor %}
+							</ul>
+						
+					</tbody>
+				</table>
+				<ul class="actions">
+					<li><a href="#" class="button">Details</a></li>
+				</ul>
+			</div>
+		</li>
+	</ul>
+</section>
+
+
+
+
+
+<!-- Footer -->
+<footer id="footer">
+	<div class="copyright">
+		<p>&copy; CodeSutra LLC. All rights reserved.</p>
+	</div>
+</footer>
+
+<!-- Scripts -->
+<script src="{% static 'assets/js/jquery.min.js' %}"></script>
+<script src="{% static 'assets/js/jquery.scrolly.min.js' %}"></script>
+<script src="{% static 'assets/js/skel.min.js' %}"></script>
+<script src="{% static 'assets/js/util.js' %}"></script>
+<!--[if lte IE 8]><script src="assets/js/ie/respond.min.js"></script><![endif]-->
+<script src="{% static 'assets/js/main.js' %}"></script>
+
+<script type="text/javascript">
+
+			var canvas = document.getElementById("chartcontainer");
+			var ctx = canvas.getContext("2d");
+
+			//ctx.font = "8px Arial";
+			//ctx.fillText("Interacting with other entrepreneurs",320,15);
+			//ctx.fillText("fosters possible role models, networking",320,27);
+			//ctx.fillText("opportunities, advice, and encouragement.",320,39);
+
+			function drawBubble(index,caption, degree)
+			{
+				var r = 0;
+				var x = 0;
+				var y = 0;
+				var x_degree1 = 0;
+				var x_degree2 = 0;
+				var y_degree = 0;
+				var font_size = "";
+				
+				if(degree >= 50)
+				{
+					ctx.fillStyle = "#ff0000";
+					ctx.strokeStyle = "#ff0000";
+					r = 50;
+					x = 50*(index+1) + 50*index + (r/2);
+					y = 60;
+					x_degree1 = x - 20;
+					x_degree2 = x + 10;
+					y_degree = y + 5;
+					font_size = "24";
+				}
+				if((degree < 50)&&(degree >= 20))
+				{
+					ctx.fillStyle = "#0000ff";
+					ctx.strokeStyle = "#0000ff";
+					r = degree;
+					x = 50*(index+1) + 50*index + (r/2);
+					y = 60 + degree;
+					x_degree1 = x - 15;
+					x_degree2 = x + 10;
+					y_degree = y + 5;
+					font_size = "18";
+				}
+				if(degree < 20)
+				{
+					ctx.fillStyle = "#00b254";
+					ctx.strokeStyle = "#00b254";
+					r = 20;
+					x = 50*(index+1) + 50*index + (r/2);
+					y = 100 + 60 - degree;
+					x_degree1 = x - 15;
+					x_degree2 = x + 5;
+					y_degree = y + 5;
+					font_size = "14";
+				}
+				
+				ctx.beginPath();
+				ctx.arc(x,y,r,0,2*Math.PI);
+				ctx.closePath();
+				ctx.stroke();
+				ctx.fill();
+
+				ctx.fillStyle = "#ffffff";
+				ctx.font = font_size + "px Arial";
+				ctx.fillText(degree,x_degree1,y_degree);
+				ctx.fillText("%",x_degree2,y_degree);
+
+				ctx.fillStyle = "#000000";
+				ctx.font = "10px Arial";
+				ctx.fillText(caption,x_degree1,200);
+
+				ctx.setLineDash([1]);
+				ctx.lineWidth = 1;
+				ctx.moveTo(x,187);
+				ctx.lineTo(x,y+r+2);
+				ctx.stroke();
+				ctx.setLineDash([0]);
+			}
+
+			
+			var i = 0;
+	</script>
+	{% for traffic in traffics %}
+	<script type="text/javascript">
+		var url = "{{ traffic.url }}";
+		var bandwidth_str = "{{ traffic.bandwidth }}";
+		var time_str = "{{ traffic.time }}";
+		var summar_str = "{{ summar }}";
+		var summar = parseInt(summar_str);
+		var bandwidth = parseInt(bandwidth_str);
+		var time = parseInt(time_str);
+		var temp = (bandwidth * time * 60 * 100) / (1024 * summar);
+		var temp1 = Math.floor(temp)
+		drawBubble(i,url,temp1);
+		i++;
+	</script>
+	{% endfor %}
+</body>
+
+</html>
+

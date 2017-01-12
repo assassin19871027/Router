@@ -1,0 +1,181 @@
+{% load staticfiles %}
+
+<!DOCTYPE HTML>
+<!--
+	Tactile by Pixelarity
+	pixelarity.com | hello@pixelarity.com
+	License: pixelarity.com/license
+-->
+<html>
+	<head>
+		<title>Device</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<!--[if lte IE 8]><script src="assets/js/ie/html5shiv.js"></script><![endif]-->
+		<link rel="stylesheet" href="{% static 'assets/css/main.css' %}" />
+		<!--[if lte IE 9]><link rel="stylesheet" href="assets/css/ie9.css" /><![endif]-->
+		<!--[if lte IE 8]><link rel="stylesheet" href="assets/css/ie8.css" /><![endif]-->
+	</head>
+	<body>
+
+		<!-- Header -->
+			<header id="header">
+				<h1><a href="{% url 'home' %}">Cod3fi</a></h1>
+				<a href="{% url 'logout' %}">Log Out</a>
+				<a href="#menu">Menu</a>
+			</header>
+				
+		
+		<!-- Menu -->
+			<nav id="menu">
+				<ul class="links">
+					<li><a href="{% url 'home' %}">Home</a></li>
+					<li><a href="{% url 'ssid' %}">SSID</a></li>
+					<li><a href="history.html">History</a></li>
+					<li><a href="networkana.html">Network Analyis</a></li>
+					<li><a href="triggers.html">Triggers</a></li>
+					<li><a href="notifications.html">Notifications</a></li>
+					<li><a href="controliot.html">Control IoT Devices</a></li>
+					<li><a href="settings.html">Settings</a></li>
+					<li><a href="https://www.cod3fi.com">Documentation</a></li>
+				</ul>
+			</nav>
+
+			<form method="post" action="#">
+					<div class="row uniform">
+						<div class="9u 12u$(small)">
+							<input type="text" name="query" id="query" value="" placeholder="Query" />
+						</div>
+						<div class="3u$ 12u$(small)">
+							<input type="submit" value="Search" class="fit" />
+						</div>
+					</div>
+				</form>
+		
+
+		<!-- One -->
+			<section id="one" class="wrapper alt style2">
+				<div class="table-wrapper">
+					<table>
+						<thead>
+							<tr>
+								<th>Name</th>
+								<th>IP address</th>
+								<th>Current Status</th>
+								<th>Rule</th>
+								<th style="width: 15%;">Notifications</th>
+								<th>Block device</th>
+								<th>Set priority</th>
+							</tr>
+						</thead>
+						<tbody>
+							{% for device in devices %}
+							<tr>
+								<td>{{ device.username }}</td>
+								{% if device.visited %}
+										<td>{{ device.domain }}</td>
+										<td style="color:#33FF3C";>Active</td>
+								{% endif %}
+								{% if not device.visited %}
+										<td>-</td>
+										<td style="color:#FF3F33";>Active</td>
+								{% endif %}
+								<td style="color:#33FF3C";>{{ device.user_rule }}</td>
+								<td style="color:#FF3F33";>
+								
+									{% for key, value in notifi.items %}
+										{% if key == device.id %}
+											{% if value != 0 %}
+												<a href="javascript:void(0)" id="cola{{ key }}">{{ value }} violations detected.</a>
+												<div id="notify{{ key }}" style="display: none;">
+													{% for key1, value1 in key_no.items %}
+														{% if device.domain == value1 %}
+															{% for key2, value2 in notify.items %}
+																{% if key2 == key1 %}
+																	<p>{{ value2 }}</p>
+																{% endif %}
+															{% endfor %}
+														{% endif %}
+													{% endfor %}
+												</div>
+											{% else %}
+												No violations detected.
+											{% endif %}
+										{% endif %}
+									{% endfor %}
+								
+								</td> 
+								<td>
+									{% if device.block %}
+									<input type="checkbox" checked></input><label></label>
+									{% else %}
+									<input type="checkbox"></input><label></label>
+									{% endif %}
+								</td>
+								<td>
+									{% if device.priority %}
+									<input type="checkbox" checked></input><label></label>
+									{% else %}
+									<input type="checkbox"></input><label></label>
+									{% endif %}
+								</td>
+							</tr>
+							{% endfor %}
+							
+							
+						</tbody>	
+					</table>
+				</div>
+			</section>
+		<!-- Footer -->
+			<footer id="footer">
+				<div class="copyright">
+					<p>&copy; CodeSutra LLC. All rights reserved.</p>
+				</div>
+			</footer>
+
+		<!-- Scripts -->
+		<script src="{% static 'assets/js/jquery.min.js' %}"></script>
+		<script src="{% static 'assets/js/jquery.scrolly.min.js' %}"></script>
+		<script src="{% static 'assets/js/skel.min.js' %}"></script>
+		<script src="{% static 'assets/js/util.js' %}"></script>
+		<!--[if lte IE 8]><script src="assets/js/ie/respond.min.js"></script><![endif]-->
+		<script src="{% static 'assets/js/main.js' %}"></script>
+
+		<script type="text/javascript">
+
+		$(document).ready(function(){
+			{% for device in devices %}
+			{% for key, value in notifi.items %}
+				{% if key == device.id %}
+					{% if value != 0 %}
+						var flag_button{{ key }} = 0;
+						$("#cola{{ key }}").click(function(){
+							if(flag_button{{ key }} == 0)
+							{
+				
+								$("#notify{{ key }}").show(500);
+								flag_button{{ key }} = 1;
+								//break;
+							}
+							else
+							{
+								$("#notify{{ key }}").hide(500);
+								flag_button{{ key }} = 0;
+								//break;
+							}
+        			
+        				});
+
+					{% endif %}
+				{% endif %}
+			{% endfor %}
+			{% endfor %}
+
+		});
+
+		</script>
+
+
+	</body>
+</html>
